@@ -35,6 +35,7 @@ def delete_tables(filename):
     os.remove(infile)
     os.rename(outfile, infile)
     print "delete table dat size=" + str(size / 1024) + "K"
+    return size
 
 
 # read project path

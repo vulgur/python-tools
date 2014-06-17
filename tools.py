@@ -1068,7 +1068,7 @@ def get_unused_animations(outputname):
 
     for key in animation_dict:
         anim = animation_dict[key]
-        if anim.name in used_animations:
+        if anim.name in used_animations or anim.name.find('widget') > -1:
             pass
         else:
             if anim.ref <= 0:
@@ -1077,6 +1077,12 @@ def get_unused_animations(outputname):
     write_output(outputname, zero_refs)
     print "unused animations:", len(zero_refs)
 
+
+def read_used_tables(path):
+    global used_tables
+    for line in open(path):
+        line = line.strip()
+        used_tables.add(line)
 # ------------- run the tool
 project_path = get_project_path("project_path.txt")
 
@@ -1085,10 +1091,6 @@ src_folder = os.path.join(project_path, "src")
 layout_folder = os.path.join(project_path, "res", "layout")
 res_folder = os.path.join(project_path, "res")
 manifest = os.path.join(project_path, "AndroidManifest.xml")
-
-# readKmobLayouts("kmob_layouts.txt")
-# readKmobStrings("kmob_strings.txt")
-# readKmobDrawables("kmob_drawables.txt")
 
 
 # --- read all things
@@ -1103,9 +1105,12 @@ read_layouts(res_folder)
 
 # unused kfmt table
 data = os.path.join(project_path, "assets", "kfmt.dat")
+db_tables = "db_tables.txt"
 read_kfmt_file(data)
+read_used_tables(db_tables)
 unused_tables = all_tables - used_tables
 write_output("unused_tables.txt", unused_tables)
+print "unused tables:", len(unused_tables)
 
 get_unused_layouts("unused_layouts.txt")
 get_unused_styles("unused_styles.txt")

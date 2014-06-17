@@ -14,14 +14,15 @@ def read_unused_strings(path):
 
 
 def delete_xml_strings(res_folder_path):
+    global unused_strings
     pattern = re.compile('<string name="(\w*)"')
     size = 0
     for folder in os.listdir(res_folder_path):
         if folder.startswith('values'):
-            for f in os.listdir(res_folder_path + os.sep + folder):
+            for f in os.listdir(os.path.join(res_folder_path, folder)):
                 if f.startswith('strings'):
                     # infile = res_folder_path + os.sep + folder + os.sep + f
-                    infile = os.path.join(res_folder, folder, f)
+                    infile = os.path.join(res_folder_path, folder, f)
                     # outfile = res_folder_path + os.sep + folder + os.sep + "temp"
                     outfile = os.path.join(res_folder_path, folder, "temp")
                     infp = open(infile, 'rb')
@@ -54,19 +55,5 @@ def delete_xml_strings(res_folder_path):
                     os.remove(infile)
                     os.rename(outfile, infile)
     print "delete strings size=" + str(size / 1024) + "K"
+    return size
 
-
-# read project path
-def read_project_path(path):
-    global project_path
-    for line in open(path):
-        line = line.strip()
-        project_path = line
-
-
-read_project_path("project_path.txt")
-
-res_folder = os.path.join(project_path, "res")
-out_path = os.path.join("outputs", "unused_strings.txt")
-read_unused_strings(out_path)
-delete_xml_strings(res_folder)

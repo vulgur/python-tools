@@ -15,6 +15,7 @@ def read_unused_styles(path):
 
 
 def delete_xml_styles(res_folder_path):
+    global unused_styles
     pattern = re.compile('<style name="([\w|\.]+)"')
     size = 0
     for folder in os.listdir(res_folder_path):
@@ -58,21 +59,6 @@ def delete_xml_styles(res_folder_path):
                     os.rename(outfile, infile)
                     size = size + (before - after)
     print "delete styles size=" + str(size / 1024) + "K"
+    return size
 
 
-# read project path
-def read_project_path(path):
-    global project_path
-    for line in open(path):
-        line = line.strip()
-        project_path = line
-
-
-read_project_path("project_path.txt")
-
-out_path = os.path.join("outputs", "unused_styles.txt")
-
-res_folder = project_path + os.sep + "res"
-
-read_unused_styles(out_path)
-delete_xml_styles(res_folder)
