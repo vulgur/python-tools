@@ -70,7 +70,7 @@ def read_project_path(path):
 
 read_project_path("project_path.txt")
 
-out_path = os.path.join("outputs", "zero_refs_styles.txt")
+out_path = os.path.join("outputs", "unused_styles.txt")
 
 res_folder = project_path + os.sep + "res"
 

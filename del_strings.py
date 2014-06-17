@@ -67,6 +67,6 @@ def read_project_path(path):
 read_project_path("project_path.txt")
 
 res_folder = os.path.join(project_path, "res")
-out_path = os.path.join("outputs", "zero_refs_strings.txt")
+out_path = os.path.join("outputs", "unused_strings.txt")
 read_unused_strings(out_path)
 delete_xml_strings(res_folder)

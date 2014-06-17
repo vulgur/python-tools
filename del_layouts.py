@@ -31,6 +31,6 @@ def read_project_path(path):
 
 
 read_project_path("project_path.txt")
-out_path = os.path.join("outputs", "zero_refs_layouts.txt")
+out_path = os.path.join("outputs", "unused_layouts.txt")
 read_unused_layouts(out_path)
 delete_layouts()

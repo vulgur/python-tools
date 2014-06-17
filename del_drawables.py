@@ -30,6 +30,6 @@ def read_project_path(path):
 
 
 read_project_path("project_path.txt")
-out_path = os.path.join("outputs", "zero_refs_drawables.txt")
+out_path = os.path.join("outputs", "unused_drawables.txt")
 read_unused_styles(out_path)
 delete_pics()
