@@ -11,7 +11,8 @@ def read_unused_styles(path):
     global unused_styles
     for line in open(path):
         line = line.strip()
-        unused_styles.add(line)
+        if not line == '':
+            unused_styles.add(line)
 
 
 def delete_xml_styles(res_folder_path):

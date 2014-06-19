@@ -8,7 +8,8 @@ def read_unused_layouts(path):
     global unused_layouts
     for line in open(path):
         line = line.strip()
-        unused_layouts.add(line)
+        if not line == '':
+            unused_layouts.add(line)
 
 
 def delete_layouts():

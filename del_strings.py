@@ -10,7 +10,8 @@ def read_unused_strings(path):
     global unused_strings
     for line in open(path):
         line = line.strip()
-        unused_strings.add(line)
+        if not line == '':
+            unused_strings.add(line)
 
 
 def delete_xml_strings(res_folder_path):

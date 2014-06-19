@@ -8,7 +8,8 @@ def read_unused_animations(path):
     global unused_animations
     for line in open(path):
         line = line.strip()
-        unused_animations.add(line)
+        if not line == '':
+            unused_animations.add(line)
 
 
 def delete_animations():
