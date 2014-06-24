@@ -1,7 +1,7 @@
 python-tools
 ============
 
-A tool for deleting all unused resource in a Android Project, including **drawables**, **strings**, **layouts** and **styles**.
+A tool for deleting all unused resources in an Android Project, including **drawables**, **strings**, **layouts** and **styles**.
 
 Steps:
 
