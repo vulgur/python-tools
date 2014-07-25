@@ -29,6 +29,7 @@ used_animations = set()
 used_tables = set()
 all_tables = set()
 cm_reports = set()
+exclusions = set()
 
 drawable_dict = {}
 layout_dict = {}
@@ -150,6 +151,15 @@ def get_project_path(path):
     for line in open(path):
         line = line.strip()
         return line
+
+
+# read exclusions
+def get_exclusion_set(path):
+    e = set()
+    for line in open(path):
+        line = line.strip()
+        e.add(line)
+    return e
 
 
 # read all needed kmob resources
@@ -462,7 +472,7 @@ def read_class(f):
                 base = base[0:len(base) - 1]
             if base in base_activities:
                 child_activities.add(child)
-                #scanOthers(child)
+                # scanOthers(child)
             if base in child_activities:
                 base_activities.add(base)
                 child_activities.add(child)
@@ -938,6 +948,7 @@ def get_underscore_name(name):
 
 
 def get_unused_drawables(outputname):
+    global exclusions
     global used_drawables
     global drawable_dict
     zero_refs = set()
@@ -948,10 +959,17 @@ def get_unused_drawables(outputname):
             set_drawable_used(drawable)
         else:
             filename = drawable.path
-            if filename.find('gowidget') > -1 or filename.find('shadow_size_n') > -1:
-                continue
             if drawable.ref <= 0:
                 reduce_drawable_refs(drawable)
+    # add exclusions to used set
+    for pre in exclusions:
+        for key in drawable_dict:
+            item = drawable_dict[key]
+            name = item.name
+            if name.startswith(pre):
+                # print 'drawables >>>>>>>>>>>>>>', name
+                used_drawables.add(name)
+
     # add unused drawables to set
     for key in drawable_dict:
         item = drawable_dict[key]
@@ -961,8 +979,6 @@ def get_unused_drawables(outputname):
             pass
         else:
             filename = item.path
-            if name.find('widget') > -1 or name.find('shadow_size_n') > -1 or name.startswith('kmob'):
-                continue
             if item.ref <= 0:
                 zero_refs.add(filename)
 
@@ -983,16 +999,26 @@ def get_unused_layouts(outputname):
     # calculate the refs
     for layout in sorted_list:
         name = layout.name
-        if name in used_layouts or name.find('widget') > -1:
+        if name in used_layouts:
             set_layout_used(layout)
         else:
             if layout.ref <= 0:
                 reduce_layout_refs(layout)
+
+    # add exclusions to used set
+    for pre in exclusions:
+        for key in layout_dict:
+            item = layout_dict[key]
+            name = item.name
+            if name.startswith(pre):
+                # print 'layouts >>>>>>>>>>>>>>', name
+                used_layouts.add(name)
+
     # add unused layouts to set
     for key in layout_dict:
         obj = layout_dict[key]
         name = obj.name
-        if name in used_layouts or name.find('widget') > -1:
+        if name in used_layouts:
             pass
         else:
             if layout_dict[key].ref <= 0:
@@ -1019,14 +1045,21 @@ def get_unused_styles(outputname):
         if tmp_name in used_styles:
             set_style_used(style)
         else:
-            if tmp_name.find('gowidget') > -1:
-                continue
             if style.ref <= 0:
                 reduce_style_refs(style)
+
+    # add exclusions to used set
+    for pre in exclusions:
+        for key in style_dict:
+            item = style_dict[key]
+            name = item.name
+            if name.startswith(pre):
+                # print 'styles >>>>>>>>>>>>>>', name
+                used_styles.add(name)
     # add unused styles to set
     for key in style_dict:
         name = style_dict[key].name
-        if name in used_styles or name.find('widget') > -1:
+        if name in used_styles:
             pass
         else:
             if style_dict[key].ref <= 0:
@@ -1039,7 +1072,17 @@ def get_unused_styles(outputname):
 def get_unused_strings(outputname):
     global used_strings
     global string_dict
+    global exclusions
     zero_refs = set()
+
+    # add exclusions to used set
+    for pre in exclusions:
+        for key in string_dict:
+            item = string_dict[key]
+            name = item.name
+            if name.startswith(pre):
+                print 'strings >>>>>>>>>>>>>>', name
+                used_strings.add(name)
 
     for key in string_dict:
         if key in used_strings:
@@ -1056,6 +1099,7 @@ def get_unused_strings(outputname):
 def get_unused_animations(outputname):
     global used_animations
     global animation_dict
+    global exclusions
     zero_refs = set()
 
     for key in animation_dict:
@@ -1066,9 +1110,18 @@ def get_unused_animations(outputname):
             if anim.ref <= 0:
                 reduce_animation_ref(anim)
 
+    # add exclusions to used set
+    for pre in exclusions:
+        for key in animation_dict:
+            item = animation_dict[key]
+            name = item.name
+            if name.startswith(pre):
+                # print 'anim >>>>>>>>>>>>>>', name
+                used_animations.add(name)
+
     for key in animation_dict:
         anim = animation_dict[key]
-        if anim.name in used_animations or anim.name.find('widget') > -1:
+        if anim.name in used_animations:
             pass
         else:
             if anim.ref <= 0:
@@ -1083,9 +1136,10 @@ def read_used_tables(path):
     for line in open(path):
         line = line.strip()
         used_tables.add(line)
+
 # ------------- run the tool
 project_path = get_project_path("project_path.txt")
-
+exclusions = get_exclusion_set("exclusions.txt")
 # ----- paths
 src_folder = os.path.join(project_path, "src")
 layout_folder = os.path.join(project_path, "res", "layout")
@@ -1102,15 +1156,6 @@ read_nested_drawables(res_folder)
 read_all_styles(res_folder)
 read_all_strings(res_folder)
 read_layouts(res_folder)
-
-# unused kfmt table
-data = os.path.join(project_path, "assets", "kfmt.dat")
-db_tables = "db_tables.txt"
-read_kfmt_file(data)
-read_used_tables(db_tables)
-unused_tables = all_tables - used_tables
-write_output("unused_tables.txt", unused_tables)
-print "unused tables:", len(unused_tables)
 
 get_unused_layouts("unused_layouts.txt")
 get_unused_styles("unused_styles.txt")
