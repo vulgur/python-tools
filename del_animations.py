@@ -23,6 +23,6 @@ def delete_animations():
             # print filename
             size = size + os.path.getsize(filename)
             os.remove(filename)
-            print "deleted animations size=" + str(size / 1024) + "K"
+        print "deleted animations size=" + str(size / 1024) + "K"
     return size, unused_animations
 

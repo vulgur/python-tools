@@ -16,9 +16,7 @@ used_drawables = set()
 used_strings = set()
 used_styles = set()
 xml_styles = set()
-kmob_layouts = set()
-kmob_drawables = set()
-kmob_strings = set()
+
 
 all_ids = set()
 
@@ -36,8 +34,7 @@ layout_dict = {}
 style_dict = {}
 string_dict = {}
 animation_dict = {}
-# ----- kmob
-isKmob = False
+
 
 output_folder = 'outputs'
 
@@ -160,28 +157,6 @@ def get_exclusion_set(path):
         line = line.strip()
         e.add(line)
     return e
-
-
-# read all needed kmob resources
-def read_kmob_drawables(path):
-    global kmob_drawables
-    for line in open(path):
-        line = line.strip()
-        kmob_drawables.add(line)
-
-
-def read_kmob_layouts(path):
-    global kmob_layouts
-    for line in open(path):
-        line = line.strip()
-        kmob_layouts.add(line)
-
-
-def read_kmob_strings(path):
-    global kmob_strings
-    for line in open(path):
-        line = line.strip()
-        kmob_strings.add(line)
 
 
 # read all layouts file in the folder 'layout'
@@ -425,10 +400,10 @@ def read_class(f):
             if table.startswith('cm_'):
                 used_tables.add(table)
         # match the layout
-        m_layout = p_layout.search(line)
+        m_layout = p_layout.findall(line)
         if m_layout:
-            layout = m_layout.group(1)
-            used_layouts.add(layout)
+            for layout in m_layout:
+                used_layouts.add(layout)
         # match the string
         m_android_string = p_string_android.findall(line)
         if m_android_string:
@@ -1081,7 +1056,7 @@ def get_unused_strings(outputname):
             item = string_dict[key]
             name = item.name
             if name.startswith(pre):
-                print 'strings >>>>>>>>>>>>>>', name
+                # print 'strings >>>>>>>>>>>>>>', name
                 used_strings.add(name)
 
     for key in string_dict:
