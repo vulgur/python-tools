@@ -735,20 +735,6 @@ def read_all_styles(res_path):
                                 style_obj = None
 
 
-def read_kfmt_file(path):
-    global all_tables
-    p_num = re.compile('.+\d+$')
-    for line in open(path):
-        table_name = line.split(':')[0]
-        m = p_num.search(table_name)
-        if m:
-            # skip all table ends with numbers
-            pass
-        else:
-            # skip 'cm_public'
-            if not table_name.startswith('cm_public'):
-                all_tables.add(table_name)
-
 
 def reduce_drawable_refs(drawable):
     """
